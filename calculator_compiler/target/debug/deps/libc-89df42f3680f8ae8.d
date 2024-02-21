@@ -1,0 +1,10 @@
+C:\USF\Research\dummy_compiler\calculator_compiler\target\debug\deps\libc-89df42f3680f8ae8.rmeta: C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\lib.rs C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\macros.rs C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\fixed_width_ints.rs C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\windows\mod.rs C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\windows\gnu\mod.rs C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\windows\gnu\align.rs
+
+C:\USF\Research\dummy_compiler\calculator_compiler\target\debug\deps\libc-89df42f3680f8ae8.d: C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\lib.rs C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\macros.rs C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\fixed_width_ints.rs C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\windows\mod.rs C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\windows\gnu\mod.rs C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\windows\gnu\align.rs
+
+C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\lib.rs:
+C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\macros.rs:
+C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\fixed_width_ints.rs:
+C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\windows\mod.rs:
+C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\windows\gnu\mod.rs:
+C:\Users\malek\.cargo\registry\src\index.crates.io-6f17d22bba15001f\libc-0.2.153\src\windows\gnu\align.rs:
