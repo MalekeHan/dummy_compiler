@@ -1,5 +1,5 @@
 mod ast;
-use crate::ast::{Expr, BinaryOp, BinaryOpKind, Assignment, If};
+use crate::ast::{Expr, Stmt, BinaryOp, BinaryOpKind, Assignment, IfStmt, BinaryOp};
 
 /*
 SAMPLE PROGRAM:
@@ -32,32 +32,34 @@ fn main(){
         right: Expr::Variable("y".to_string()),
     }));
 
-    // create the bodies for the if and else branches
-    let if_body = vec![Expr::Assignment(Box::new(Assignment {
-        name: "x".to_string(),
-        value: Expr::BinaryOp(Box::new(BinaryOp {
-            kind: BinaryOpKind::Add,
-            left: Expr::Variable("x".to_string()),
-            right: Expr::Number(1.0),
-        })),
-    }))];
+    let if_body = vec![
+        Stmt::Assignment(Assignment {
+            name: "x".to_string(),
+            value: Expr::BinaryOp(Box::new(BinaryOp {
+                kind: BinaryOpKind::Add,
+                left: Expr::Variable("x".to_string()),
+                right: Expr::Number(1.0),
+            })),
+        })
+    ];
 
-    // create the else bodty
-    let else_body = vec![Expr::Assignment(Box::new(Assignment {
-        name: "y".to_string(),
-        value: Expr::BinaryOp(Box::new(BinaryOp {
-            kind: BinaryOpKind::Add,
-            left: Expr::Variable("y".to_string()),
-            right: Expr::Number(1.0),
-        })),
-    }))];
+    let else_body = vec![
+        Stmt::Assignment(Assignment {
+            name: "y".to_string(),
+            value: Expr::BinaryOp(Box::new(BinaryOp {
+                kind: BinaryOpKind::Add,
+                left: Expr::Variable("y".to_string()),
+                right: Expr::Number(1.0),
+            })),
+        })
+    ];
 
-    // create the whole entire if statement
-    let if_statement = Expr::If(Box::new(If {
-        condition,
-        consequence: if_body,
-        alternative: else_body,
-    }));
+    // the if statement is now a statement with true and false branches
+    let if_statement = Stmt::If(IfStmt {
+        guard: condition,
+        true_branch: if_body,
+        false_branch: else_body,
+    });
 
     // the complete program
     let program = vec![assign_x, assign_y, if_statement];

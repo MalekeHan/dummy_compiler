@@ -5,10 +5,6 @@ pub enum Expr {
     Number(f64),
     Variable(String),
     BinaryOp(Box<BinaryOp>),
-    Assignment(Box<Assignment>),
-    If(Box<If>),
-    While(Box<While>),
-    Phi(Vec<PhiNode>), // reps phi nodes for SSA form
 }
 
 // binop
@@ -32,6 +28,14 @@ pub struct BinaryOp {
     pub right: Expr,
 }
 
+pub enum Stmt {
+    Assignment(Assignment),
+    If(IfStmt),
+    While(WhileStmt),
+
+}
+
+
 // reps an assignment (x =5 )
 pub struct Assignment {
     pub name: String,
@@ -39,18 +43,17 @@ pub struct Assignment {
 }
 
 // reps an if
-pub struct If {
+pub struct IfStmt {
     pub guard: Expr,
-    pub ttguard: Vec<Expr>,
-    pub ffgaurd: Vec<Expr>,
+    pub true_branch: Vec<Stmt>,
+    pub false_branch: Vec<Stmt>,
 }
 
 // reps a while
-pub struct While {
+pub struct WhileStmt {
     pub guard: Expr,
-    pub body: Vec<Expr>,
+    pub body: Vec<Stmt>,
 }
-
 // reps the phi node 
 pub struct PhiNode {
     pub variable: String,
