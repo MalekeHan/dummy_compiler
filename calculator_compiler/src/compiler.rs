@@ -4,7 +4,7 @@ use inkwell::{
     module::Module,
     values::{FunctionValue, IntValue},
 };
-use std::{collections::HashMap};
+use std::collections::HashMap;
 
 use crate::ast::*;
 
@@ -18,7 +18,7 @@ pub struct Compiler<'ctx> {
 }
 
 impl<'ctx> Compiler<'ctx> {
-    // constructor for the compiler struct 
+    // constructor for the compiler struct
     pub fn new(context: &'ctx Context) -> Self {
         let module = context.create_module("my_compiler");
         let builder = context.create_builder();
@@ -38,7 +38,7 @@ impl<'ctx> Compiler<'ctx> {
             Expr::Variable(name) => Ok(*self.variables.get(name).unwrap()), // retrueve the LLVM value from the variables map -- panic if not found in map
 
             // we want to recursively compile both the left and right operands first
-            // after we can use the correct LLVM instruction for the operation 
+            // after we can use the correct LLVM instruction for the operation
             Expr::BinaryOp(binary_op) => {
                 let left = self.compile_expr(&binary_op.left)?;
                 let right = self.compile_expr(&binary_op.right)?;
@@ -46,29 +46,30 @@ impl<'ctx> Compiler<'ctx> {
                     BinaryOpKind::Add => self.builder.build_int_add(left, right, "addtmp"),
                     BinaryOpKind::Subtract => self.builder.build_int_sub(left, right, "subtmp"),
                     BinaryOpKind::Multiply => self.builder.build_int_mul(left, right, "multmp"),
-                    BinaryOpKind::Divide => self.builder.build_int_signed_div(left, right, "divtmp"),
+                    BinaryOpKind::Divide => {
+                        self.builder.build_int_signed_div(left, right, "divtmp")
+                    }
                     _ => unimplemented!(),
                 }
-            },
+            }
         }
     }
 
-     // function to compile an statement AST node to LLVM IR --> used for multiple kinds statements 
+    // function to compile an statement AST node to LLVM IR --> used for multiple kinds statements
     fn compile_stmt(&mut self, stmt: &Stmt) -> Result<(), BuilderError> {
         match stmt {
             // handle the Assignment statemetns by compiling the expression on the right hand side and then store the var into the var map
             Stmt::Assignment(assignment) => {
                 let value = self.compile_expr(&assignment.value)?;
                 self.variables.insert(assignment.name.clone(), value); // insert the computed value into the var map [varName |--> value ]
-            },
-
+            }
 
             Stmt::If(if_stmt) => {
                 // we need to compile the condition into an LLVM val
                 let condition = self.compile_expr(&if_stmt.guard)?;
                 let parent = self.fn_value_opt.unwrap(); // get the current function being compiled
 
-                // create all the basic blocks for if-then-else 
+                // create all the basic blocks for if-then-else
                 let then_bb = self.context.append_basic_block(parent, "then");
                 let else_bb = self.context.append_basic_block(parent, "else");
 
@@ -76,8 +77,8 @@ impl<'ctx> Compiler<'ctx> {
                 let cont_bb = self.context.append_basic_block(parent, "ifcont");
 
                 // create a branhc instruction and jump based on the result of the guard
-                self.builder.build_conditional_branch(condition, then_bb, else_bb);
-
+                self.builder
+                    .build_conditional_branch(condition, then_bb, else_bb);
 
                 // compiles statements in the then block
                 self.builder.position_at_end(then_bb);
@@ -94,27 +95,27 @@ impl<'ctx> Compiler<'ctx> {
                     self.compile_stmt(stmt)?;
                 }
 
-                  // jump to the continuation block after the else  block
+                // jump to the continuation block after the else  block
                 self.builder.build_unconditional_branch(cont_bb);
 
                 self.builder.position_at_end(cont_bb);
-            },
-
+            }
 
             Stmt::While(while_stmt) => {
                 let parent = self.fn_value_opt.unwrap(); // get the current function being compiled
-                // create all the bbs
+                                                         // create all the bbs
                 let loop_bb = self.context.append_basic_block(parent, "loop");
                 let body_bb = self.context.append_basic_block(parent, "body");
                 let cont_bb = self.context.append_basic_block(parent, "whilecont");
 
-                // jumps to the loop block from the current position -- unconditionally since we entered 
+                // jumps to the loop block from the current position -- unconditionally since we entered
                 self.builder.build_unconditional_branch(loop_bb);
 
-                // compile the loop condition/guard and check if we need to enter the loop again 
+                // compile the loop condition/guard and check if we need to enter the loop again
                 self.builder.position_at_end(loop_bb);
                 let condition = self.compile_expr(&while_stmt.guard)?;
-                self.builder.build_conditional_branch(condition, body_bb, cont_bb);
+                self.builder
+                    .build_conditional_branch(condition, body_bb, cont_bb);
 
                 // actually compile the loop body
                 self.builder.position_at_end(body_bb);
@@ -147,7 +148,8 @@ impl<'ctx> Compiler<'ctx> {
             self.compile_stmt(stmt);
         }
 
-        self.builder.build_return(Some(&i64_type.const_int(0, false)));
+        self.builder
+            .build_return(Some(&i64_type.const_int(0, false)));
     }
 }
 

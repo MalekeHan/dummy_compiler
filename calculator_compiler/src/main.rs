@@ -1,9 +1,8 @@
-use calculator_compiler::*;
 use ast::*;
+use calculator_compiler::*;
 use compiler::*;
-use std::path::Path;
 use inkwell::context::Context;
-
+use std::path::Path;
 
 fn main() {
     let context = Context::create();
@@ -30,7 +29,10 @@ fn main() {
     compiler.compile(&[s]);
 
     // Save the compiled LLVM IR to a file
-    compiler.module.print_to_file(Path::new("output.ll")).expect("failed");
+    compiler
+        .module
+        .print_to_file(Path::new("output.ll"))
+        .expect("failed");
 
     // Optionally, print the LLVM IR to stdout
     let llvm_ir = compiler.module.print_to_string().to_string();
