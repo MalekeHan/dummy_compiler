@@ -2,11 +2,9 @@ use inkwell::{
     builder::{Builder, BuilderError},
     context::Context,
     module::Module,
-    passes::PassManager,
-    values::{BasicValue, BasicValueEnum, FunctionValue, IntValue},
-    IntPredicate,
+    values::{FunctionValue, IntValue},
 };
-use std::{collections::HashMap, path::Path};
+use std::{collections::HashMap};
 
 use crate::ast::*;
 
