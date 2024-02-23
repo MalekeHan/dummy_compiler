@@ -2,6 +2,8 @@ mod compiler;
 use calculator_compiler::Compiler;
 use ast::*;
 use std::path::Path;
+use inkwell::context::Context;
+
 
 fn main() {
     let context = Context::create();
