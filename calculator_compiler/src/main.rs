@@ -1,6 +1,8 @@
 use ast::*;
 use calculator_compiler::*;
 
+use calculator_compiler::Compiler; 
+
 fn main() {
     // you need to declare variable names as rust variables
     let x = "foo";
@@ -20,5 +22,16 @@ fn main() {
         })
     };
 
-    println!("Built: {:#?}", s);
+    //println!("Built: {:#?}", s);
+
+    compiler.compile(&[s]);
+
+    // Save the compiled LLVM IR to a file
+    compiler.module.print_to_file(Path::new("output.ll")).expect("Failed to write LLVM IR to file");
+
+    // Optionally, print the LLVM IR to stdout
+    let llvm_ir = compiler.module.print_to_string().to_str().unwrap();
+    println!("LLVM IR:\n{}", llvm_ir);
+
+
 }
