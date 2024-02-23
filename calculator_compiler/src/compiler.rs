@@ -8,7 +8,7 @@ use inkwell::{
 };
 use std::{collections::HashMap, path::Path};
 
-use ast::*;
+use crate::ast::*;
 
 //struct to hold the state and tools to use LLVM
 pub struct Compiler<'ctx> {

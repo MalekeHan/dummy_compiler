@@ -11,15 +11,15 @@ impl Display for Expr {
             BinaryOp(op) => {
                 write!(f, "({}", op.left)?;
                 match op.kind {
-                    BinaryOpKind::Add => todo!(),
-                    BinaryOpKind::Subtract => todo!(),
-                    BinaryOpKind::Multiply => todo!(),
-                    BinaryOpKind::Divide => todo!(),
-                    BinaryOpKind::GreaterThan => todo!(),
-                    BinaryOpKind::LessThan => todo!(),
-                    BinaryOpKind::GreaterThanOrEqual => todo!(),
-                    BinaryOpKind::LessThanOrEqual => todo!(),
-                    BinaryOpKind::Equal => todo!(),
+                    BinaryOpKind::Add => write!(f, " + ")?,
+                    BinaryOpKind::Subtract => write!(f, " - ")?,
+                    BinaryOpKind::Multiply => write!(f, " * ")?,
+                    BinaryOpKind::Divide => write!(f, " / ")?,
+                    BinaryOpKind::GreaterThan => write!(f, " > ")?,
+                    BinaryOpKind::LessThan => write!(f, " < ")?,
+                    BinaryOpKind::GreaterThanOrEqual => write!(f, " >= ")?,
+                    BinaryOpKind::LessThanOrEqual => write!(f, " <= ")?,
+                    BinaryOpKind::Equal => write!(f, " == ")?,
                 }
                 write!(f, "{})", op.right)
             }
