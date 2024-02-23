@@ -11,7 +11,7 @@ use std::{collections::HashMap, path::Path};
 use ast::*;
 
 //struct to hold the state and tools to use LLVM
-struct Compiler<'ctx> {
+pub struct Compiler<'ctx> {
     context: &'ctx Context,
     module: Module<'ctx>,
     builder: Builder<'ctx>,

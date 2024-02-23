@@ -1,7 +1,7 @@
 // Assuming compiler.rs is in the same directory as main.rs
 // If not, adjust the path accordingly.
 mod compiler;
-use compiler::Compiler;
+use calculator_compiler::Compiler;
 use ast::*;
 use std::path::Path;
 
