@@ -8,7 +8,6 @@ use inkwell::{
 };
 use std::{collections::HashMap, path::Path};
 
-mod ast;
 use ast::*;
 
 //struct to hold the state and tools to use LLVM
@@ -78,41 +77,57 @@ impl<'ctx> Compiler<'ctx> {
                 // we need to create the continuation block
                 let cont_bb = self.context.append_basic_block(parent, "ifcont");
 
-                // create a branhc instruction and jump based on the 
+                // create a branhc instruction and jump based on the result of the guard
                 self.builder.build_conditional_branch(condition, then_bb, else_bb);
 
+
+                // compiles statements in the then block
                 self.builder.position_at_end(then_bb);
                 for stmt in &if_stmt.true_branch {
                     self.compile_stmt(stmt);
                 }
+
+                // jump to the continuation block after the then block
                 self.builder.build_unconditional_branch(cont_bb);
 
+                // compiles statements in the else block
                 self.builder.position_at_end(else_bb);
                 for stmt in &if_stmt.false_branch {
                     self.compile_stmt(stmt);
                 }
+
+                  // jump to the continuation block after the else  block
                 self.builder.build_unconditional_branch(cont_bb);
 
                 self.builder.position_at_end(cont_bb);
             },
+
+
             Stmt::While(while_stmt) => {
-                let parent = self.fn_value_opt.unwrap();
+                let parent = self.fn_value_opt.unwrap(); // get the current function being compiled
+                // create all the bbs
                 let loop_bb = self.context.append_basic_block(parent, "loop");
                 let body_bb = self.context.append_basic_block(parent, "body");
                 let cont_bb = self.context.append_basic_block(parent, "whilecont");
 
+                // jumps to the loop block from the current position -- unconditionally since we entered 
                 self.builder.build_unconditional_branch(loop_bb);
 
+                // compile the loop condition/guard and check if we need to enter the loop again 
                 self.builder.position_at_end(loop_bb);
                 let condition = self.compile_expr(&while_stmt.guard);
                 self.builder.build_conditional_branch(condition, body_bb, cont_bb);
 
+                // actually compile the loop body
                 self.builder.position_at_end(body_bb);
                 for stmt in &while_stmt.body {
                     self.compile_stmt(stmt);
                 }
+
+                // jumps back to check the condition again after completing the body
                 self.builder.build_unconditional_branch(loop_bb);
 
+                // jump to the continuation block after the loop
                 self.builder.position_at_end(cont_bb);
             }
         }
@@ -136,17 +151,17 @@ impl<'ctx> Compiler<'ctx> {
     }
 }
 
-fn main() {
-    let context = Context::create();
-    let mut compiler = Compiler::new(&context);
+// fn main() {
+//     let context = Context::create();
+//     let mut compiler = Compiler::new(&context);
 
-    // Assume `ast` is your Abstract Syntax Tree parsed from source code
-    let ast = vec![
-        // Your AST nodes go here
-        // Example: Stmt::Assignment(Assignment { name: "x".to_string(), value: Expr::Number(42) }),
-    ];
-    compiler.compile(&ast);
+//     // Assume `ast` is your Abstract Syntax Tree parsed from source code
+//     let ast = vec![
+//         // Your AST nodes go here
+//         // Example: Stmt::Assignment(Assignment { name: "x".to_string(), value: Expr::Number(42) }),
+//     ];
+//     compiler.compile(&ast);
 
-    compiler.module.print_to_string().to_str().unwrap();
-    compiler.module.print_to_file(Path::new("output.ll")).unwrap();
-}
+//     compiler.module.print_to_string().to_str().unwrap();
+//     compiler.module.print_to_file(Path::new("output.ll")).unwrap();
+// }

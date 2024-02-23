@@ -1,9 +1,14 @@
+// Assuming compiler.rs is in the same directory as main.rs
+// If not, adjust the path accordingly.
+mod compiler;
+use compiler::Compiler;
 use ast::*;
-use calculator_compiler::*;
-
-use calculator_compiler::Compiler; 
+use std::path::Path;
 
 fn main() {
+    let context = Context::create();
+    let mut compiler = Compiler::new(&context);
+
     // you need to declare variable names as rust variables
     let x = "foo";
     let y = "bar";
@@ -11,18 +16,16 @@ fn main() {
     let s = stmt! {
         // parentheses around statements, and parentheses in guards are mandatory
         (while (5) {
-        (if (3) {
-            (x = 5);
-            (if (5) {
-                (y = ((x + 3) - 5))
+            (if (3) {
+                (x = 5);
+                (if (5) {
+                    (y = ((x + 3) - 5))
+                } else {
+                })
             } else {
             })
-        } else {
-        })
         })
     };
-
-    //println!("Built: {:#?}", s);
 
     compiler.compile(&[s]);
 
@@ -32,6 +35,4 @@ fn main() {
     // Optionally, print the LLVM IR to stdout
     let llvm_ir = compiler.module.print_to_string().to_str().unwrap();
     println!("LLVM IR:\n{}", llvm_ir);
-
-
 }
