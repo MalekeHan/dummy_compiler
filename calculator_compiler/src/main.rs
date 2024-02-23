@@ -1,6 +1,6 @@
-mod compiler;
-use calculator_compiler::Compiler;
+use calculator_compiler::*;
 use ast::*;
+use compiler::*;
 use std::path::Path;
 use inkwell::context::Context;
 
@@ -33,6 +33,6 @@ fn main() {
     compiler.module.print_to_file(Path::new("output.ll")).expect("failed");
 
     // Optionally, print the LLVM IR to stdout
-    let llvm_ir = compiler.module.print_to_string().to_str().unwrap();
+    let llvm_ir = compiler.module.print_to_string().to_string();
     println!("LLVM IR:\n{}", llvm_ir);
 }

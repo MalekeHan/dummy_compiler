@@ -1,9 +1,9 @@
 use inkwell::{
-    builder::Builder,
+    builder::{Builder, BuilderError},
     context::Context,
     module::Module,
     passes::PassManager,
-    values::{BasicValueEnum, BasicValue, IntValue, FunctionValue},
+    values::{BasicValue, BasicValueEnum, FunctionValue, IntValue},
     IntPredicate,
 };
 use std::{collections::HashMap, path::Path};
@@ -13,7 +13,7 @@ use crate::ast::*;
 //struct to hold the state and tools to use LLVM
 pub struct Compiler<'ctx> {
     context: &'ctx Context,
-    module: Module<'ctx>,
+    pub module: Module<'ctx>,
     builder: Builder<'ctx>,
     variables: HashMap<String, IntValue<'ctx>>,
     fn_value_opt: Option<FunctionValue<'ctx>>,
@@ -21,7 +21,7 @@ pub struct Compiler<'ctx> {
 
 impl<'ctx> Compiler<'ctx> {
     // constructor for the compiler struct 
-    fn new(context: &'ctx Context) -> Self {
+    pub fn new(context: &'ctx Context) -> Self {
         let module = context.create_module("my_compiler");
         let builder = context.create_builder();
         Compiler {
@@ -34,16 +34,16 @@ impl<'ctx> Compiler<'ctx> {
     }
 
     // function to compile an expression AST node into LLVM IR return an LLVM int value
-    fn compile_expr(&mut self, expr: &Expr) -> IntValue<'ctx> {
+    fn compile_expr(&mut self, expr: &Expr) -> Result<IntValue<'ctx>, BuilderError> {
         match expr {
-            Expr::Number(n) => self.context.i64_type().const_int(*n as u64, false), // the expression is a number convert directly to LLVM
-            Expr::Variable(name) => *self.variables.get(name).expect("Variable not found"), // retrueve the LLVM value from the variables map -- panic if not found in map
+            Expr::Number(n) => Ok(self.context.i64_type().const_int(*n as u64, false)), // the expression is a number convert directly to LLVM
+            Expr::Variable(name) => Ok(*self.variables.get(name).unwrap()), // retrueve the LLVM value from the variables map -- panic if not found in map
 
             // we want to recursively compile both the left and right operands first
             // after we can use the correct LLVM instruction for the operation 
             Expr::BinaryOp(binary_op) => {
-                let left = self.compile_expr(&binary_op.left);
-                let right = self.compile_expr(&binary_op.right);
+                let left = self.compile_expr(&binary_op.left)?;
+                let right = self.compile_expr(&binary_op.right)?;
                 match binary_op.kind {
                     BinaryOpKind::Add => self.builder.build_int_add(left, right, "addtmp"),
                     BinaryOpKind::Subtract => self.builder.build_int_sub(left, right, "subtmp"),
@@ -56,18 +56,18 @@ impl<'ctx> Compiler<'ctx> {
     }
 
      // function to compile an statement AST node to LLVM IR --> used for multiple kinds statements 
-    fn compile_stmt(&mut self, stmt: &Stmt) {
+    fn compile_stmt(&mut self, stmt: &Stmt) -> Result<(), BuilderError> {
         match stmt {
             // handle the Assignment statemetns by compiling the expression on the right hand side and then store the var into the var map
             Stmt::Assignment(assignment) => {
-                let value = self.compile_expr(&assignment.value);
+                let value = self.compile_expr(&assignment.value)?;
                 self.variables.insert(assignment.name.clone(), value); // insert the computed value into the var map [varName |--> value ]
             },
 
 
             Stmt::If(if_stmt) => {
                 // we need to compile the condition into an LLVM val
-                let condition = self.compile_expr(&if_stmt.guard);
+                let condition = self.compile_expr(&if_stmt.guard)?;
                 let parent = self.fn_value_opt.unwrap(); // get the current function being compiled
 
                 // create all the basic blocks for if-then-else 
@@ -84,7 +84,7 @@ impl<'ctx> Compiler<'ctx> {
                 // compiles statements in the then block
                 self.builder.position_at_end(then_bb);
                 for stmt in &if_stmt.true_branch {
-                    self.compile_stmt(stmt);
+                    self.compile_stmt(stmt)?;
                 }
 
                 // jump to the continuation block after the then block
@@ -93,7 +93,7 @@ impl<'ctx> Compiler<'ctx> {
                 // compiles statements in the else block
                 self.builder.position_at_end(else_bb);
                 for stmt in &if_stmt.false_branch {
-                    self.compile_stmt(stmt);
+                    self.compile_stmt(stmt)?;
                 }
 
                   // jump to the continuation block after the else  block
@@ -115,7 +115,7 @@ impl<'ctx> Compiler<'ctx> {
 
                 // compile the loop condition/guard and check if we need to enter the loop again 
                 self.builder.position_at_end(loop_bb);
-                let condition = self.compile_expr(&while_stmt.guard);
+                let condition = self.compile_expr(&while_stmt.guard)?;
                 self.builder.build_conditional_branch(condition, body_bb, cont_bb);
 
                 // actually compile the loop body
@@ -131,10 +131,12 @@ impl<'ctx> Compiler<'ctx> {
                 self.builder.position_at_end(cont_bb);
             }
         }
+
+        Ok(())
     }
 
     // main compilation function that will take the program in  (series of statements) and return LLVM IR
-    fn compile(&mut self, ast: &[Stmt]) {
+    pub fn compile(&mut self, ast: &[Stmt]) {
         let i64_type = self.context.i64_type();
         let fn_type = i64_type.fn_type(&[], false);
         let function = self.module.add_function("main", fn_type, None);
