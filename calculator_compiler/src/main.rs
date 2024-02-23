@@ -1,5 +1,3 @@
-// Assuming compiler.rs is in the same directory as main.rs
-// If not, adjust the path accordingly.
 mod compiler;
 use calculator_compiler::Compiler;
 use ast::*;
@@ -30,7 +28,7 @@ fn main() {
     compiler.compile(&[s]);
 
     // Save the compiled LLVM IR to a file
-    compiler.module.print_to_file(Path::new("output.ll")).expect("Failed to write LLVM IR to file");
+    compiler.module.print_to_file(Path::new("output.ll")).expect("failed");
 
     // Optionally, print the LLVM IR to stdout
     let llvm_ir = compiler.module.print_to_string().to_str().unwrap();
