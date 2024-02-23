@@ -29,14 +29,14 @@ fn main() {
     let b = "b";
     let counter = "counter";
 
-    let initialization_and_loop = stmt! {
-        (a = 10);
-        (b = 20);
-        (while (counter < 100) {
-            (a = (a + b));
-            (b = (b + 1));
-            (counter = (counter + 1));
-        })
+    let initialization_and_loop = block! {
+        {(a = 10)};
+        {(b = 20)};
+        {(while (counter < 100) {
+            {(a = (a + b))};
+            {(b = (b + 1))};
+            {(counter = (counter + 1))};
+        })}
     };
 
     println!("Initialization and Loop: {:#?}", initialization_and_loop);
