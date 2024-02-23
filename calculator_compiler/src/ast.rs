@@ -1,5 +1,8 @@
 // src/ast.rs
 
+mod display_impl;
+pub use display_impl::*;
+
 // expression in the calc app
 pub enum Expr {
     Number(f64),
@@ -20,8 +23,6 @@ pub enum BinaryOpKind {
     Equal,
 }
 
-
-
 pub struct BinaryOp {
     pub kind: BinaryOpKind,
     pub left: Expr,
@@ -32,9 +33,7 @@ pub enum Stmt {
     Assignment(Assignment),
     If(IfStmt),
     While(WhileStmt),
-
 }
-
 
 // reps an assignment (x =5 )
 pub struct Assignment {
@@ -54,7 +53,7 @@ pub struct WhileStmt {
     pub guard: Expr,
     pub body: Vec<Stmt>,
 }
-// reps the phi node 
+// reps the phi node
 pub struct PhiNode {
     pub variable: String,
     pub incoming: Vec<(String, Expr)>, // (block label, value)
