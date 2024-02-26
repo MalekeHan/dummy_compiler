@@ -24,6 +24,7 @@ fn main() {
             } else {
             })
         })
+        
     };
 
     compiler.compile(&[s]);
