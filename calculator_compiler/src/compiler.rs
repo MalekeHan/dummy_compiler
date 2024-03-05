@@ -141,7 +141,24 @@ impl<'ctx> Compiler<'ctx> {
     }
 
     // main compilation function that will take the program in  (series of statements) and return LLVM IR
-    pub fn compile(&mut self, ast: &[Stmt]) {
+    // pub fn compile(&mut self, ast: &[Stmt]) {
+    //     let i64_type = self.context.i64_type();
+    //     let fn_type = i64_type.fn_type(&[], false);
+    //     let function = self.module.add_function("main", fn_type, None);
+    //     let basic_block = self.context.append_basic_block(function, "entry");
+
+    //     self.builder.position_at_end(basic_block);
+    //     self.fn_value_opt = Some(function);
+
+    //     for stmt in ast {
+    //         self.compile_stmt(stmt);
+    //     }
+
+    //     self.builder
+    //         .build_return(Some(&i64_type.const_int(0, false)));
+    // }
+
+    pub fn compile(&mut self, ast: Vec<Stmt>) {
         let i64_type = self.context.i64_type();
         let fn_type = i64_type.fn_type(&[], false);
         let function = self.module.add_function("main", fn_type, None);
@@ -150,11 +167,12 @@ impl<'ctx> Compiler<'ctx> {
         self.builder.position_at_end(basic_block);
         self.fn_value_opt = Some(function);
 
-        // for stmt in ast {
-        //     self.compile_stmt(stmt);
-        // }
-
-        self.compile_block(ast);
+        // Since we're now working with a Vec<Stmt>, we can iterate over it directly.
+        // There's no need to change how each statement is processed.
+        for stmt in ast {
+            // `compile_stmt` now consumes the statement, so ensure `compile_stmt` can accept owned Stmt if necessary.
+            self.compile_stmt(&stmt).expect("Failed to compile statement");
+        }
 
         self.builder
             .build_return(Some(&i64_type.const_int(0, false)));
