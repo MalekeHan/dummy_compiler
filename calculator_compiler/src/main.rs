@@ -8,23 +8,42 @@ fn main() {
     let context = Context::create();
     let mut compiler = Compiler::new(&context);
 
-    // you need to declare variable names as rust variables
-    let x = "foo";
-    let y = "bar";
+    // // you need to declare variable names as rust variables
+    // let x = "foo";
+    // let y = "bar";
+
+    // let s = stmt! {
+    //     // parentheses around statements, and parentheses in guards are mandatory
+    //     (while (5) {
+    //         (if (3) {
+    //             (x = 5);
+    //             (if (5) {
+    //                 (y = ((x + 3) - 5))
+    //             } else {
+    //             })
+    //         } else {
+    //         })
+    //     })
+        
+    // };
+
+    let n = "n"; // Assuming n is the input number for which we want to calculate the Fibonacci number
+    let fib = "fib";
+    let a = "a";
+    let b = "b";
+    let i = "i";
 
     let s = stmt! {
-        // parentheses around statements, and parentheses in guards are mandatory
-        (while (5) {
-            (if (3) {
-                (x = 5);
-                (if (5) {
-                    (y = ((x + 3) - 5))
-                } else {
-                })
-            } else {
-            })
+        (fib = 0);
+        (a = 0);
+        (b = 1);
+        (i = 2);
+        (while ((i <= n)) {
+            (fib = (a + b));
+            (a = b);
+            (b = fib);
+            (i = (i + 1))
         })
-        
     };
 
     compiler.compile(&[s]);
