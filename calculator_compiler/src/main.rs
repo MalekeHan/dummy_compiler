@@ -35,19 +35,19 @@ fn main() {
 
     let s = block! ({
         // Initial assignments
-        (n = 5);
-        (a = 0); // fib0 
-        (b = 1); // fib1 
-        (i = 1)
+        // (n = 5);
+        // (a = 0); // fib0 
+        // (b = 1); // fib1 
+        // (i = 1);
     
         // Loop to calculate Fibonacci iteratively
-        // (while ((i < n)) {
-        //     // Temporary variable to hold fib1 for the update
-        //     (temp = b);
-        //     (b = (b + a)); // New fib1 is the sum of fib0 and fib1
-        //     (a = temp); // Update fib0 to the old fib1
-        //     (i = (i + 1));
-        // })
+        (while ((i < n)) {
+            // Temporary variable to hold fib1 for the update
+            (temp = b);
+            (b = (b + a)); // New fib1 is the sum of fib0 and fib1
+            (a = temp); // Update fib0 to the old fib1
+            (i = (i + 1));
+        })
     });
     
 
