@@ -158,7 +158,7 @@ impl<'ctx> Compiler<'ctx> {
     //         .build_return(Some(&i64_type.const_int(0, false)));
     // }
 
-    pub fn compile(&mut self, ast: Vec<Stmt>) {
+    pub fn compile(&mut self, ast: &Vec<Stmt>) {
         let i64_type = self.context.i64_type();
         let fn_type = i64_type.fn_type(&[], false);
         let function = self.module.add_function("main", fn_type, None);
