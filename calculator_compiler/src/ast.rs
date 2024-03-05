@@ -79,7 +79,7 @@ macro_rules! stmt {
             value: expr!($e),
         })
     };
-    ((while ($g:expr) $body:tt)) => {
+    ((while ($g:tt) $body:tt)) => {
         Stmt::While(WhileStmt {
             guard: expr!($g),
             body: block!($body),
