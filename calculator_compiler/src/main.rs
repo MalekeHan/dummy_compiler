@@ -32,19 +32,25 @@ fn main() {
     let a = "a";
     let b = "b";
     let i = "i";
+    let temp = "foo";
 
     let s = stmt! {
-        (fib = 0);
-        (a = 0);
-        (b = 1);
-        (i = 2);
-        (while ((i <= n)) {
-            (fib = (a + b));
-            (a = b);
-            (b = fib);
-            (i = (i + 1))
+        // Initial assignments
+        (n = 5);
+        (a = 0); // fib0 represents a
+        (b = 1); // fib1 represents b
+        (i = 1);
+    
+        // Loop to calculate Fibonacci iteratively
+        (while ((i < n)) {
+            // Temporary variable to hold fib1 for the update
+            (temp = b)
+            (b = (b + a)); // New fib1 is the sum of fib0 and fib1
+            (a = temp); // Update fib0 to the old fib1
+            (i = (i + 1));
         })
     };
+    
 
     compiler.compile(&[s]);
 
