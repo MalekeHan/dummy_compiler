@@ -49,7 +49,28 @@ impl<'ctx> Compiler<'ctx> {
                     BinaryOpKind::Divide => {
                         self.builder.build_int_signed_div(left, right, "divtmp")
                     }
-                    _ => unimplemented!(),
+                    BinaryOpKind::GreaterThan => {
+                        let cmp = self.builder.build_int_compare(IntPredicate::SGT, left, right, "cmptmp");
+                        Ok(self.builder.build_int_z_extend(cmp, self.context.i64_type(), "booltmp"))
+                    },
+                    BinaryOpKind::LessThan => {
+                        let cmp = self.builder.build_int_compare(IntPredicate::SLT, left, right, "cmptmp");
+                        Ok(self.builder.build_int_z_extend(cmp, self.context.i64_type(), "booltmp"))
+                    },
+                    BinaryOpKind::GreaterThanOrEqual => {
+                        let cmp = self.builder.build_int_compare(IntPredicate::SGE, left, right, "cmptmp");
+                        Ok(self.builder.build_int_z_extend(cmp, self.context.i64_type(), "booltmp"))
+                    },
+                    BinaryOpKind::LessThanOrEqual => {
+                        let cmp = self.builder.build_int_compare(IntPredicate::SLE, left, right, "cmptmp");
+                        Ok(self.builder.build_int_z_extend(cmp, self.context.i64_type(), "booltmp"))
+                    },
+                    BinaryOpKind::Equal => {
+                        let cmp = self.builder.build_int_compare(IntPredicate::EQ, left, right, "cmptmp");
+                        Ok(self.builder.build_int_z_extend(cmp, self.context.i64_type(), "booltmp"))
+                    },
+                    // error out if not done
+                    _ => Err(BuilderError::new("Operation not supported")),
                 }
             }
         }
