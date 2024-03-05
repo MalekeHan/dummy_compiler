@@ -43,7 +43,7 @@ fn main() {
         // Loop to calculate Fibonacci iteratively
         (while ((i < n)) {
             // Temporary variable to hold fib1 for the update
-            (temp = b)
+            (temp = b);
             (b = (b + a)); // New fib1 is the sum of fib0 and fib1
             (a = temp); // Update fib0 to the old fib1
             (i = (i + 1));
