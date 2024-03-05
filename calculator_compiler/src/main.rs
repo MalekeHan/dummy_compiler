@@ -35,10 +35,10 @@ fn main() {
 
     let s = block! ({
         // Initial assignments
-        // (n = 5);
-        // (a = 0); // fib0 
-        // (b = 1); // fib1 
-        // (i = 1);
+        (n = 5);
+        (a = 0); // fib0 
+        (b = 1); // fib1 
+        (i = 1);
     
         // Loop to calculate Fibonacci iteratively
         (while ((i < n)) {
