@@ -46,7 +46,7 @@ fn main() {
             (temp = b);
             (b = (b + a)); // New fib1 is the sum of fib0 and fib1
             (a = temp); // Update fib0 to the old fib1
-            (i = (i + 1));
+            (i = (i + 1))
         })
     });
     
