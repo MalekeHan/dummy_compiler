@@ -28,27 +28,27 @@ fn main() {
     // };
 
     let n = "n"; // Assuming n is the input number for which we want to calculate the Fibonacci number
-    let fib = "fib";
     let a = "a";
     let b = "b";
     let i = "i";
-    let temp = "foo";
+    let temp = "temp";
 
-    let s = block! {
-        {(n = 5)};
-        {(a = 0)}; // Initialize a to 0, represents fib0
-        {(b = 1)}; // Initialize b to 1, represents fib1
-        {(i = 1)}; // Initialize counter i to 1
-        
-        // Loop to calculate Fibonacci iteratively
-        ((while ((i < n)) {
-            {(temp = b)}; // Temporary variable to hold b for the update
-            {(b = (b + a))}; // New b is the sum of a and b
-            {(a = temp)}; // Update a to the old b
-            {(i = (i + 1))}; // Increment i
-        }))
-    };
+    let s = stmt! {
+        // Initial assignments
+        (n = 5);
+        (a = 0); // fib0 
+        (b = 1); // fib1 
+        (i = 1);
     
+        // Loop to calculate Fibonacci iteratively
+        (while ((i < n)) {
+            // Temporary variable to hold fib1 for the update
+            (temp = b)
+            (b = (b + a)); // New fib1 is the sum of fib0 and fib1
+            (a = temp); // Update fib0 to the old fib1
+            (i = (i + 1));
+        })
+    };
     
 
     compiler.compile(&[s]);
