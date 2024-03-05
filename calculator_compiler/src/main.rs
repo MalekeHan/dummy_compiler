@@ -33,7 +33,7 @@ fn main() {
     let i = "i";
     let temp = "temp";
 
-    let s = block! {
+    let s = block! ({
         // Initial assignments
         (n = 5);
         (a = 0); // fib0 
@@ -48,7 +48,7 @@ fn main() {
             (a = temp); // Update fib0 to the old fib1
             (i = (i + 1));
         })
-    };
+    });
     
 
     compiler.compile(&s);
