@@ -33,7 +33,7 @@ fn main() {
     let i = "i";
     let temp = "temp";
 
-    let s = stmt! {
+    let s = block! {
         // Initial assignments
         (n = 5);
         (a = 0); // fib0 
@@ -51,7 +51,7 @@ fn main() {
     };
     
 
-    compiler.compile(&[s]);
+    compiler.compile(&s);
 
     // Save the compiled LLVM IR to a file
     compiler
