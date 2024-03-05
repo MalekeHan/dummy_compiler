@@ -32,73 +32,28 @@ impl<'ctx> Compiler<'ctx> {
     }
 
     // function to compile an expression AST node into LLVM IR return an LLVM int value
-    // fn compile_expr(&mut self, expr: &Expr) -> Result<IntValue<'ctx>, BuilderError> {
-    //     match expr {
-    //         Expr::Number(n) => Ok(self.context.i64_type().const_int(*n as u64, false)), // the expression is a number convert directly to LLVM
-    //         Expr::Variable(name) => Ok(*self.variables.get(name).unwrap()), // retrueve the LLVM value from the variables map -- panic if not found in map
-
-    //         // we want to recursively compile both the left and right operands first
-    //         // after we can use the correct LLVM instruction for the operation
-    //         Expr::BinaryOp(binary_op) => {
-    //             let left = self.compile_expr(&binary_op.left)?;
-    //             let right = self.compile_expr(&binary_op.right)?;
-    //             match binary_op.kind {
-    //                 BinaryOpKind::Add => self.builder.build_int_add(left, right, "addtmp"),
-    //                 BinaryOpKind::Subtract => self.builder.build_int_sub(left, right, "subtmp"),
-    //                 BinaryOpKind::Multiply => self.builder.build_int_mul(left, right, "multmp"),
-    //                 BinaryOpKind::Divide => {
-    //                     self.builder.build_int_signed_div(left, right, "divtmp")
-    //                 }
-    //                 _ => unimplemented!(),
-    //             }
-    //         }
-    //     }
-    // }
-
     fn compile_expr(&mut self, expr: &Expr) -> Result<IntValue<'ctx>, BuilderError> {
         match expr {
-            Expr::Number(n) => Ok(self.context.i64_type().const_int(*n as u64, false)),
-            Expr::Variable(name) => {
-                self.variables.get(name).cloned().ok_or_else(|| {
-                    BuilderError::new(format!("Variable `{}` not found", name))
-                })
-            },
+            Expr::Number(n) => Ok(self.context.i64_type().const_int(*n as u64, false)), // the expression is a number convert directly to LLVM
+            Expr::Variable(name) => Ok(*self.variables.get(name).unwrap()), // retrueve the LLVM value from the variables map -- panic if not found in map
+
+            // we want to recursively compile both the left and right operands first
+            // after we can use the correct LLVM instruction for the operation
             Expr::BinaryOp(binary_op) => {
                 let left = self.compile_expr(&binary_op.left)?;
                 let right = self.compile_expr(&binary_op.right)?;
                 match binary_op.kind {
-                    BinaryOpKind::Add => Ok(self.builder.build_int_add(left, right, "addtmp")),
-                    BinaryOpKind::Subtract => Ok(self.builder.build_int_sub(left, right, "subtmp")),
-                    BinaryOpKind::Multiply => Ok(self.builder.build_int_mul(left, right, "multmp")),
-                    BinaryOpKind::Divide => Ok(self.builder.build_int_signed_div(left, right, "divtmp")),
-                    BinaryOpKind::GreaterThan => {
-                        let cmp = self.builder.build_int_compare(IntPredicate::SGT, left, right, "cmptmp");
-                        Ok(self.builder.build_int_z_extend(cmp, self.context.i64_type(), "booltmp"))
-                    },
-                    BinaryOpKind::LessThan => {
-                        let cmp = self.builder.build_int_compare(IntPredicate::SLT, left, right, "cmptmp");
-                        Ok(self.builder.build_int_z_extend(cmp, self.context.i64_type(), "booltmp"))
-                    },
-                    BinaryOpKind::GreaterThanOrEqual => {
-                        let cmp = self.builder.build_int_compare(IntPredicate::SGE, left, right, "cmptmp");
-                        Ok(self.builder.build_int_z_extend(cmp, self.context.i64_type(), "booltmp"))
-                    },
-                    BinaryOpKind::LessThanOrEqual => {
-                        let cmp = self.builder.build_int_compare(IntPredicate::SLE, left, right, "cmptmp");
-                        Ok(self.builder.build_int_z_extend(cmp, self.context.i64_type(), "booltmp"))
-                    },
-                    BinaryOpKind::Equal => {
-                        let cmp = self.builder.build_int_compare(IntPredicate::EQ, left, right, "cmptmp");
-                        Ok(self.builder.build_int_z_extend(cmp, self.context.i64_type(), "booltmp"))
-                    },
-                    // Handle other binary operations if necessary
-                    _ => Err(BuilderError::new("Operation not supported")),
+                    BinaryOpKind::Add => self.builder.build_int_add(left, right, "addtmp"),
+                    BinaryOpKind::Subtract => self.builder.build_int_sub(left, right, "subtmp"),
+                    BinaryOpKind::Multiply => self.builder.build_int_mul(left, right, "multmp"),
+                    BinaryOpKind::Divide => {
+                        self.builder.build_int_signed_div(left, right, "divtmp")
+                    }
+                    _ => unimplemented!(),
                 }
-            },
-            // Add handling for other expression types if your language supports them
+            }
         }
     }
-    
 
     fn compile_block(&mut self, block: &[Stmt]) {
         for stmt in block {
