@@ -36,7 +36,7 @@ fn main() {
 
     let s = stmt! {
         // Initial assignments
-        (n = 5)
+        ((n = 5))
         (a = 0) // fib0 represents a
         (b = 1) // fib1 represents b
         (i = 1)
