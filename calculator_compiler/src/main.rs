@@ -51,7 +51,7 @@ fn main() {
     });
     
 
-    compiler.compile(&s);
+    compiler.compile(&[s]);
 
     // Save the compiled LLVM IR to a file
     compiler

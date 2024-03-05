@@ -66,7 +66,7 @@ pub struct PhiNode {
 
 #[macro_export]
 macro_rules! stmt {
-    ((if ($g:expr) $tt:tt else $ff:tt)) => {
+    ((if ($g:tt) $tt:tt else $ff:tt)) => {
         Stmt::If(IfStmt {
             guard: expr!($g),
             true_branch: block!($tt),

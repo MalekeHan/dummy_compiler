@@ -55,6 +55,12 @@ impl<'ctx> Compiler<'ctx> {
         }
     }
 
+    fn compile_block(&mut self, block: &[Stmt]) {
+        for stmt in block {
+            self.compile_stmt(stmt);
+        }
+    }
+
     // function to compile an statement AST node to LLVM IR --> used for multiple kinds statements
     fn compile_stmt(&mut self, stmt: &Stmt) -> Result<(), BuilderError> {
         match stmt {
@@ -144,9 +150,11 @@ impl<'ctx> Compiler<'ctx> {
         self.builder.position_at_end(basic_block);
         self.fn_value_opt = Some(function);
 
-        for stmt in ast {
-            self.compile_stmt(stmt);
-        }
+        // for stmt in ast {
+        //     self.compile_stmt(stmt);
+        // }
+
+        self.compile_block(ast);
 
         self.builder
             .build_return(Some(&i64_type.const_int(0, false)));
