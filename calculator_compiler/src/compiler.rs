@@ -203,7 +203,7 @@ impl<'ctx> Compiler<'ctx> {
     
         // Assuming 'b' holds the last Fibonacci number calculated and you want to return it.
         // Make sure 'b' is actually the variable you want to return, and it's stored in 'variables'.
-        let return_value = if let Some(return_val) = self.variables.get("b") {
+        let return_value = if let Some(return_val) = self.variables.get("n") {
             *return_val
         } else {
             i64_type.const_int(0, false) // Default return value if 'b' isn't found
