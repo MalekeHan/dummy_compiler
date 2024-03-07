@@ -119,9 +119,9 @@ impl<'ctx> Compiler<'ctx> {
             Stmt::While(while_stmt) => {
                 let parent = self.fn_value_opt.unwrap(); // get the current function being compiled
                                                          // create all the bbs
-                let loop_bb = self.context.append_basic_block(parent, "loop");
+                let loop_bb = self.context.append_basic_block(parent, "loop_head");
                 let body_bb = self.context.append_basic_block(parent, "body");
-                let cont_bb = self.context.append_basic_block(parent, "whilecont");
+                let exit_bb = self.context.append_basic_block(parent, "loop_exit");
 
                 // jumps to the loop block from the current position -- unconditionally since we entered
                 self.builder.build_unconditional_branch(loop_bb);
@@ -130,7 +130,7 @@ impl<'ctx> Compiler<'ctx> {
                 self.builder.position_at_end(loop_bb);
                 let condition = self.compile_expr(&while_stmt.guard)?;
                 self.builder
-                    .build_conditional_branch(condition, body_bb, cont_bb);
+                    .build_conditional_branch(condition, body_bb, exit_bb);
 
                 // actually compile the loop body
                 self.builder.position_at_end(body_bb);
@@ -142,7 +142,7 @@ impl<'ctx> Compiler<'ctx> {
                 self.builder.build_unconditional_branch(loop_bb);
 
                 // jump to the continuation block after the loop
-                self.builder.position_at_end(cont_bb);
+                self.builder.position_at_end(exit_bb);
             }
         }
 
