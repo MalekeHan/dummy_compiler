@@ -31,7 +31,9 @@ RUN dnf update -y && \
     ncurses-devel \
     curl \
     libffi-devel \
-    zlib-devel && \
+    zlib-devel \
+    clang \
+    gdb && \
     dnf clean all
 
 # install rustup

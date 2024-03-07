@@ -167,25 +167,53 @@ impl<'ctx> Compiler<'ctx> {
     //         .build_return(Some(&i64_type.const_int(0, false)));
     // }
 
+    // pub fn compile(&mut self, ast: &Vec<Stmt>) {
+    //     let i64_type = self.context.i64_type();
+    //     let fn_type = i64_type.fn_type(&[], false);
+    //     let function = self.module.add_function("main", fn_type, None);
+    //     let basic_block = self.context.append_basic_block(function, "entry");
+
+    //     self.builder.position_at_end(basic_block);
+    //     self.fn_value_opt = Some(function);
+
+    //     // Since we're now working with a Vec<Stmt>, we can iterate over it directly.
+    //     // There's no need to change how each statement is processed.
+    //     for stmt in ast {
+    //         // `compile_stmt` now consumes the statement, so ensure `compile_stmt` can accept owned Stmt if necessary.
+    //         self.compile_stmt(&stmt).expect("Failed to compile statement");
+    //     }
+
+    //     self.builder
+    //         .build_return(Some(&i64_type.const_int(0, false)));
+    // }
+
+
     pub fn compile(&mut self, ast: &Vec<Stmt>) {
         let i64_type = self.context.i64_type();
-        let fn_type = i64_type.fn_type(&[], false);
+        let fn_type = i64_type.fn_type(&[], false); // Assuming the function returns i64
         let function = self.module.add_function("main", fn_type, None);
         let basic_block = self.context.append_basic_block(function, "entry");
-
+    
         self.builder.position_at_end(basic_block);
         self.fn_value_opt = Some(function);
-
-        // Since we're now working with a Vec<Stmt>, we can iterate over it directly.
-        // There's no need to change how each statement is processed.
+    
         for stmt in ast {
-            // `compile_stmt` now consumes the statement, so ensure `compile_stmt` can accept owned Stmt if necessary.
-            self.compile_stmt(&stmt).expect("Failed to compile statement");
+            self.compile_stmt(stmt).expect("Failed to compile statement");
         }
-
-        self.builder
-            .build_return(Some(&i64_type.const_int(0, false)));
+    
+        // Assuming 'b' holds the last Fibonacci number calculated and you want to return it.
+        // Make sure 'b' is actually the variable you want to return, and it's stored in 'variables'.
+        let return_value = if let Some(return_val) = self.variables.get("b") {
+            *return_val
+        } else {
+            i64_type.const_int(0, false) // Default return value if 'b' isn't found
+        };
+    
+        self.builder.build_return(Some(&return_value));
+    
+        // The rest of your function that writes the LLVM IR to file or stdout remains unchanged.
     }
+    
 }
 
 // fn main() {
