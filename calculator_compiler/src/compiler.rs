@@ -52,11 +52,11 @@ impl<'ctx> Compiler<'ctx> {
                     BinaryOpKind::Divide => self.builder.build_int_signed_div(left, right, "divtmp"),
                     
                     // comparison and equality ops
-                    BinaryOpKind::GreaterThan => (self.builder.build_int_compare(IntPredicate::SGT, left, right, "gttmp")),
-                    BinaryOpKind::LessThan => (self.builder.build_int_compare(IntPredicate::SLT, left, right, "lttmp")),
-                    BinaryOpKind::GreaterThanOrEqual => (self.builder.build_int_compare(IntPredicate::SGE, left, right, "getmp")),
-                    BinaryOpKind::LessThanOrEqual => (self.builder.build_int_compare(IntPredicate::SLE, left, right, "letmp")),
-                    BinaryOpKind::Equal => (self.builder.build_int_compare(IntPredicate::EQ, left, right, "eqtmp")),
+                    BinaryOpKind::GreaterThan => self.builder.build_int_compare(IntPredicate::SGT, left, right, "gttmp"),
+                    BinaryOpKind::LessThan => self.builder.build_int_compare(IntPredicate::SLT, left, right, "lttmp"),
+                    BinaryOpKind::GreaterThanOrEqual => self.builder.build_int_compare(IntPredicate::SGE, left, right, "getmp"),
+                    BinaryOpKind::LessThanOrEqual => self.builder.build_int_compare(IntPredicate::SLE, left, right, "letmp"),
+                    BinaryOpKind::Equal => self.builder.build_int_compare(IntPredicate::EQ, left, right, "eqtmp"),
                     _ => unimplemented!(),
                 }
             }
