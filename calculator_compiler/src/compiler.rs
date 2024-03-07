@@ -3,6 +3,7 @@ use inkwell::{
     context::Context,
     module::Module,
     values::{FunctionValue, IntValue},
+    IntPredicate
 };
 use std::collections::HashMap;
 
