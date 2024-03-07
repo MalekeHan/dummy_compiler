@@ -43,12 +43,20 @@ impl<'ctx> Compiler<'ctx> {
                 let left = self.compile_expr(&binary_op.left)?;
                 let right = self.compile_expr(&binary_op.right)?;
                 match binary_op.kind {
+
+                    // arithmetic ops
+
                     BinaryOpKind::Add => self.builder.build_int_add(left, right, "addtmp"),
                     BinaryOpKind::Subtract => self.builder.build_int_sub(left, right, "subtmp"),
                     BinaryOpKind::Multiply => self.builder.build_int_mul(left, right, "multmp"),
-                    BinaryOpKind::Divide => {
-                        self.builder.build_int_signed_div(left, right, "divtmp")
-                    }
+                    BinaryOpKind::Divide => self.builder.build_int_signed_div(left, right, "divtmp"),
+                    
+                    // comparison and equality ops
+                    BinaryOpKind::GreaterThan => (self.builder.build_int_compare(IntPredicate::SGT, left, right, "gttmp")),
+                    BinaryOpKind::LessThan => (self.builder.build_int_compare(IntPredicate::SLT, left, right, "lttmp")),
+                    BinaryOpKind::GreaterThanOrEqual => (self.builder.build_int_compare(IntPredicate::SGE, left, right, "getmp")),
+                    BinaryOpKind::LessThanOrEqual => (self.builder.build_int_compare(IntPredicate::SLE, left, right, "letmp")),
+                    BinaryOpKind::Equal => (self.builder.build_int_compare(IntPredicate::EQ, left, right, "eqtmp")),
                     _ => unimplemented!(),
                 }
             }
