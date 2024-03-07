@@ -51,7 +51,7 @@ fn main() {
     // });
 
     let block = block! ({
-        (n = (a < b))
+        (n = (3 < 5))
     });
     
 
